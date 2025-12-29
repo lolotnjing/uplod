@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta charset="UTF-8">
+<title>Chat Bot By R</title>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<audio id="bgm" src="bgm.mp3" loop></audio>
+
+<!-- MUSIC PLAYER -->
+<div id="musicPlayer">
+  <input id="progress" type="range" min="0" value="0">
+
+  <div class="controls">
+    <button onclick="togglePlay()" id="playBtn">
+      <i class="fa-solid fa-play"></i>
+    </button>
+  </div>
+
+  <input id="volume" type="range" min="0" max="1" step="0.01" value="0.5">
+</div>
+
+<div class="chat">
+<!-- OWNER PROFILE -->
+<div class="owner-card">
+  <img src="./owner.jpg" alt="Owner">
+
+  <div class="owner-info">
+    <div class="owner-name">R</div>
+    <div class="owner-role">Mampir Bang</div>
+
+    <div class="owner-social">
+      <a href="https://github.com" target="_blank">
+        <i class="fa-brands fa-github"></i>
+      </a>
+      <a href="https://instagram.com/" target="_blank">
+        <i class="fa-brands fa-instagram"></i>
+      </a>
+      <a href="https://" target="_blank">
+        <i class="fa-brands fa-whatsapp"></i>
+      </a>
+    </div>
+  </div>
+</div>
+<h1>Chat Bot</h1>
+
+<!-- MODEL PICKER 
+<div class="model-picker">
+  <div class="model-card active" data-model="mahiru">
+    🌸 <b>Mahiru</b>
+    <small>Lembut & Hangat</small>
+  </div>
+  <div class="model-card" data-model="kauruko">
+    ✨ <b>Kauruko</b>
+    <small>Anggun & Tenang</small>
+  </div>
+  <div class="model-card" data-model="tsundere">
+    😤 <b>Tsundere</b>
+    <small>Jutek tapi peduli</small>
+  </div>
+  <div class="model-card" data-model="assistant">
+    🤖 <b>Netral</b>
+    <small>Asisten umum</small>
+  </div>
+</div>
+-->
+<div id="log"></div>
+
+<div class="chat-input">
+  <input id="input" placeholder="💬 Ketik pesan..." />
+  <button onclick="send()">
+    <i class="fa-solid fa-paper-plane"></i>
+  </button>
+</div>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
