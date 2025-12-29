@@ -4,9 +4,12 @@ import { insertChat, getHistory } from '../db.js'
 const ai = new Hono()
 
 ai.post('/chat', async c => {
-  const body = await c.req.json().catch(() => ({}))
-  const text = body.text?.trim()
+  let body = {}
+  try {
+    body = await c.req.json()
+  } catch {}
 
+  const text = body.text?.trim()
   if (!text) {
     return c.json({ reply: '❌ Pesan kosong' }, 400)
   }
@@ -14,11 +17,14 @@ ai.post('/chat', async c => {
   const session =
     c.req.header('x-session-id') || 'default'
 
-  // simpan USER dulu
-  insertChat(session, 'user', text)
+  // simpan USER dulu (await!)
+  await insertChat(session, 'user', text)
 
-  const prompt = `Kamu adalah Kauruko Wuguri.
-Tenang, lembut, anggun, menenangkan.`
+  const prompt = `
+Kamu adalah Kauruko Wuguri.
+Sifat: tenang, lembut, anggun, menenangkan.
+Balas dengan sopan dan singkat.
+`.trim()
 
   const url =
     `https://api.siputzx.my.id/api/ai/gpt3?` +
@@ -26,25 +32,36 @@ Tenang, lembut, anggun, menenangkan.`
     `content=${encodeURIComponent(text)}`
 
   let reply = null
+  const controller = new AbortController()
+  const timeout = setTimeout(
+    () => controller.abort(),
+    15000
+  )
 
   try {
-    const controller = new AbortController()
-    setTimeout(() => controller.abort(), 15000)
+    const res = await fetch(url, {
+      signal: controller.signal
+    })
 
-    const res = await fetch(url, { signal: controller.signal })
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}`)
+    }
+
     const data = await res.json()
 
     reply =
-      data?.result ||
-      data?.reply ||
-      data?.data ||
+      data?.result ??
+      data?.reply ??
+      data?.data ??
       null
 
   } catch (e) {
     console.error('AI ERROR:', e)
+  } finally {
+    clearTimeout(timeout)
   }
 
-  // 🚨 JANGAN SIMPAN KALAU GAGAL
+  // ❌ jangan simpan kalau gagal
   if (!reply) {
     return c.json({
       character: 'Kauruko Wuguri',
@@ -53,7 +70,7 @@ Tenang, lembut, anggun, menenangkan.`
   }
 
   // simpan AI cuma kalau valid
-  insertChat(session, 'ai', reply)
+  await insertChat(session, 'ai', reply)
 
   return c.json({
     character: 'Kauruko Wuguri',
